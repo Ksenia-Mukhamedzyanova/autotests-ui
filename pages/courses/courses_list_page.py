@@ -1,4 +1,5 @@
 from playwright.sync_api import Page, expect
+import allure
 
 from components.courses.course_view_component import CourseViewComponent
 from components.courses.courses_list_toolbar_view_component import CoursesListToolbarViewComponent
@@ -20,6 +21,7 @@ class CoursesListPage(BasePage):
 
         self.toolbar_view = CoursesListToolbarViewComponent(page)
 
+    @allure.step('Check visible empty view')
     def check_visible_empty_view(self):
         self.empty_view.check_visible(
             title='There is no results',
