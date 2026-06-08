@@ -1,4 +1,3 @@
-# config.py
 from enum import Enum
 from typing import Self
 
@@ -38,6 +37,9 @@ class Settings(BaseSettings):
     tracing_dir: DirectoryPath
     browser_state_file: FilePath
 
+    def get_base_url(self) -> str:
+        return f"{self.app_url}/"
+
     @classmethod
     def initialize(cls) -> Self:
         videos_dir = DirectoryPath("./videos")
@@ -53,5 +55,6 @@ class Settings(BaseSettings):
             tracing_dir=tracing_dir,
             browser_state_file=browser_state_file
         )
+
 
 settings = Settings.initialize()
