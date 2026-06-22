@@ -21,7 +21,6 @@ jobs:
         with:
           python-version: '3.11'
 
-
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -41,7 +40,7 @@ jobs:
           path: gh-pages
 
       - name: Generates Allure Report with history
-        uses: simple-elf/allure-report-action@v1.7
+        uses: simple-elf/allure-report-action@master
         if: always()
         with:
           allure_results: allure-results
