@@ -46,6 +46,7 @@ jobs:
         with:
           allure_results: allure-results
           allure_history: allure-history
+          keep_reports: 20 # Опционально: сколько прошлых отчетов хранить в истории
 
       - name: Deploy report to Github Pages
         if: always()
@@ -53,4 +54,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history
+          publish_dir: allure-history # Оставляем эту папку, экшен сам настроит index.html в корне
