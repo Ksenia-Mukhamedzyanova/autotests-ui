@@ -1,4 +1,4 @@
-name: UI tests # Comment
+name: UI tests
 
 on:
   push:
@@ -40,7 +40,7 @@ jobs:
           path: gh-pages
 
       - name: Generates Allure Report with history
-        uses: mayafl/allure-report-action@v1
+        uses: simple-elf/allure-report-action@v1.14
         if: always()
         with:
           allure_results: allure-results
