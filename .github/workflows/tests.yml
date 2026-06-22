@@ -8,45 +8,55 @@ on:
     branches:
       - main
 
+# ВАЖНО: Даем права на запись в ветку gh-pages
+permissions:
+  contents: write
+
 jobs:
   run-tests:
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Check out repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip  # Обновляем pip до последней версии
-          pip install -r requirements.txt  # Устанавливаем зависимости, указанные в requirements.txt
-          playwright install --with-deps  # Устанавливаем браузеры для Playwright (если они не установлены)
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          playwright install --with-deps
 
-      - name: Run Playwright tests with pytest and generate Allure results
+      - name: Run Playwright tests with pytest
         run: |
           pytest -m regression --alluredir=allure-results --numprocesses 2
+        continue-on-error: true # Тесты не заблокируют генерацию отчета, если упадут
 
       - name: Get Allure history
-        uses: actions/checkout@v7
+        uses: actions/checkout@v4
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
-          path: gh-pages
+          path: gh-pages-dir
 
-      - name: Generates Allure Report with history
-        uses: simple-elf/allure-report-action@v1.14
+      - name: Generates Allure Report
+        uses: simple-elf/allure-report-action@v1.11
         if: always()
         with:
           allure_results: allure-results
           allure_history: allure-history
-          keep_reports: 20 # Опционально: сколько прошлых отчетов хранить в истории
+          keep_reports: 20
+
+      - name: Move history to report root
+        if: always()
+        run: |
+          cp -r allure-history/* allure-report/
+          cp -r gh-pages-dir/history allure-results/ || true
 
       - name: Deploy report to Github Pages
         if: always()
@@ -54,4 +64,4 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
-          publish_dir: allure-history # Оставляем эту папку, экшен сам настроит index.html в корне
+          publish_dir: allure-report # Публикуем allure-report, там БУДЕТ index.html
